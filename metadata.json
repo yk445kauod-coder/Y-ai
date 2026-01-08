@@ -1,0 +1,8 @@
+{
+  "name": "YAI - Your Personal Assistant",
+  "description": "A high-performance, ChatGPT-style mobile app clone named YAI, featuring web search, deep reasoning, image generation, diagramming, and professional productivity tools.",
+  "requestFramePermissions": [
+    "camera",
+    "microphone"
+  ]
+}
