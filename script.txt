@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+
+# Abort on errors
+set -e
+
+echo "🚀 Starting deployment process for YAI..."
+
+# Build the project
+echo "📦 Building production assets..."
+npm run build
+
+# Navigate into the build output directory
+cd dist
+
+# Initialize a new git repository in the dist folder
+git init
+git add -A
+git commit -m 'deploy: GitHub Pages automated build'
+
+# Force push to the gh-pages branch of the target repository
+# Note: Using the master:gh-pages syntax to push the local master (dist) to remote gh-pages
+echo "📤 Pushing to GitHub..."
+git push -f https://github.com/yk445kauod-coder/Y-ai.git master:gh-pages
+
+cd -
+
+echo "✅ Done! Your app will be live shortly at:"
+echo "🔗 https://yk445kauod-coder.github.io/Y-ai/"
