@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="AILA - AI Life Assistant. مساعد الحياة الذكي">
+  <meta name="theme-color" content="#1a1a2e">
+  
+  <title>AILA - AI Life Assistant</title>
+  
+  <!-- PWA Manifest -->
+  <link rel="manifest" href="/manifest.json">
+  
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="apple-touch-icon" href="/icons/icon-192.png">
+  
+  <!-- Preconnect to external resources -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://api.groq.com">
+  
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --color-primary: #6366f1;
+      --color-primary-light: #818cf8;
+      --color-primary-dark: #4f46e5;
+      --color-secondary: #ec4899;
+      --color-background: #0f0f1a;
+      --color-surface: #1a1a2e;
+      --color-surface-light: #252542;
+      --color-text: #f8fafc;
+      --color-text-secondary: #94a3b8;
+      --color-success: #22c55e;
+      --color-warning: #f59e0b;
+      --color-error: #ef4444;
+      --color-info: #3b82f6;
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      font-family: 'IBM Plex Sans Arabic', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: var(--color-background);
+      color: var(--color-text);
+    }
+    
+    /* Loading screen */
+    #loading {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: var(--color-background);
+      z-index: 9999;
+      transition: opacity 0.3s ease-out;
+    }
+    
+    #loading.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+    
+    .loading-logo {
+      font-size: 4rem;
+      margin-bottom: 2rem;
+      animation: pulse 2s ease-in-out infinite;
+    }
+    
+    .loading-text {
+      font-size: 1.5rem;
+      color: var(--color-text-secondary);
+      margin-bottom: 2rem;
+    }
+    
+    .loading-spinner {
+      width: 48px;
+      height: 48px;
+      border: 4px solid var(--color-surface-light);
+      border-top-color: var(--color-primary);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+    
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.1); opacity: 0.8; }
+    }
+    
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    
+    /* Error screen */
+    #error {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      padding: 2rem;
+      background: var(--color-background);
+      z-index: 10000;
+    }
+    
+    #error.show {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .error-icon {
+      font-size: 4rem;
+      margin-bottom: 1rem;
+    }
+    
+    .error-title {
+      font-size: 1.5rem;
+      margin-bottom: 0.5rem;
+    }
+    
+    .error-message {
+      color: var(--color-text-secondary);
+      margin-bottom: 2rem;
+      text-align: center;
+      max-width: 500px;
+    }
+    
+    .error-retry {
+      padding: 0.75rem 2rem;
+      font-size: 1rem;
+      background: var(--color-primary);
+      color: white;
+      border: none;
+      border-radius: 0.5rem;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    
+    .error-retry:hover {
+      background: var(--color-primary-dark);
+    }
+  </style>
+</head>
+<body>
+  <!-- Loading screen -->
+  <div id="loading">
+    <div class="loading-logo">🤖</div>
+    <div class="loading-text">AILA</div>
+    <div class="loading-spinner"></div>
+  </div>
+  
+  <!-- Error screen -->
+  <div id="error">
+    <div class="error-icon">⚠️</div>
+    <h1 class="error-title">حدث خطأ</h1>
+    <p class="error-message" id="error-message"></p>
+    <button class="error-retry" onclick="location.reload()">إعادة المحاولة</button>
+  </div>
+  
+  <!-- Main application -->
+  <aila-app></aila-app>
+  
+  <script type="module" src="/src/main.ts"></script>
+  
+  <script>
+    // Global error handling
+    window.addEventListener('error', (event) => {
+      console.error('Global error:', event.error);
+      showError(event.error?.message || 'حدث خطأ غير متوقع');
+    });
+    
+    window.addEventListener('unhandledrejection', (event) => {
+      console.error('Unhandled rejection:', event.reason);
+      showError(event.reason?.message || 'حدث خطأ غير متوقع');
+    });
+    
+    function showError(message) {
+      const loading = document.getElementById('loading');
+      const error = document.getElementById('error');
+      const errorMessage = document.getElementById('error-message');
+      
+      loading.classList.add('hidden');
+      errorMessage.textContent = message;
+      error.classList.add('show');
+    }
+    
+    // Hide loading screen when app is ready
+    window.addEventListener('aila:ready', () => {
+      setTimeout(() => {
+        document.getElementById('loading').classList.add('hidden');
+      }, 500);
+    });
+  </script>
+</body>
+</html>
