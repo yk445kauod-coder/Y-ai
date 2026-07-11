@@ -374,7 +374,7 @@ export class WorkflowEngine {
         
         // Determine next step
         if (result.success) {
-          currentStepId = step.next?.[0];
+          currentStepId = step.next?.[0] || undefined;
           
           // Handle conditional branching
           if (step.type === 'condition' && step.config.condition) {
@@ -710,7 +710,7 @@ export class WorkflowEngine {
       version: '1.0.0',
       steps: template.steps.map((step) => ({
         ...step,
-        id: step.id || uuidv4(),
+        id: uuidv4(),
       })),
       entryPoint: template.entryPoint,
       variables: template.variables,

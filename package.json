@@ -84,27 +84,31 @@
   },
   "homepage": "https://aila-ai.github.io",
   "devDependencies": {
+    "@playwright/test": "^1.41.0",
     "@types/node": "^20.11.0",
+    "@types/uuid": "^10.0.0",
     "@typescript-eslint/eslint-plugin": "^6.19.0",
     "@typescript-eslint/parser": "^6.19.0",
+    "@vitest/coverage-v8": "^1.2.2",
+    "@vitest/ui": "^1.2.2",
     "eslint": "^8.56.0",
     "eslint-plugin-lit": "^1.11.0",
     "eslint-plugin-wc": "^2.0.0",
+    "playwright": "^1.41.0",
     "prettier": "^3.2.4",
     "typedoc": "^0.25.7",
     "typescript": "^5.3.3",
     "vite": "^5.0.12",
-    "vitest": "^1.2.2",
-    "@vitest/coverage-v8": "^1.2.2",
-    "@vitest/ui": "^1.2.2",
-    "playwright": "^1.41.0",
-    "@playwright/test": "^1.41.0"
+    "vite-plugin-static-copy": "^4.1.1",
+    "vitest": "^1.2.2"
   },
   "dependencies": {
-    "lit": "^3.1.1",
-    "zustand": "^4.5.0",
     "idb": "^8.0.0",
-    "uuid": "^9.0.1"
+    "lit": "^3.1.1",
+    "react": "^19.2.7",
+    "react-dom": "^19.2.7",
+    "uuid": "^9.0.1",
+    "zustand": "^4.5.0"
   },
   "engines": {
     "node": ">=18.0.0",

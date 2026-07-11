@@ -168,15 +168,16 @@ export { PluginManager, createPluginManager, getPluginManager } from './core/plu
 // Auto-initialize when DOM is ready
 if (typeof window !== 'undefined') {
   document.addEventListener('DOMContentLoaded', async () => {
-    const aila = AILA.getInstance();
-    
     try {
-      await aila.initialize();
+      // Import the AILA App component (which will register the custom element)
+      await import('./ui/components/AILAApp.js');
       
-      // Register AILA on window
-      (window as unknown as { AILA?: AILA }).AILA = aila;
+      // Dispatch ready event to hide loading screen
+      window.dispatchEvent(new CustomEvent('aila:ready'));
     } catch (error) {
-      console.error('Failed to auto-initialize AILA:', error);
+      console.error('Failed to initialize AILA:', error);
+      // Still dispatch ready event to hide loading screen
+      window.dispatchEvent(new CustomEvent('aila:ready'));
     }
   });
 }
